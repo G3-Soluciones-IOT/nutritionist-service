@@ -8,9 +8,6 @@ import lombok.Setter;
 import pe.edu.upc.nutritionist_service.nutritionist.domain.model.valueobjects.Specialty;
 import pe.edu.upc.nutritionist_service.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 
-import java.util.Date;
-
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -48,10 +45,6 @@ public class Nutritionist extends AuditableAbstractAggregateRoot<Nutritionist> {
     @Column(name = "profile_picture_url")
     private String profilePictureUrl;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated_at", nullable = false)
-    private Date updatedAt;
-
     public Nutritionist(Long userId, String fullName, String licenseNumber,
                         Specialty specialty, Integer yearsExperience,
                         Boolean acceptingNewPatients, String bio, String profilePictureUrl) {
@@ -63,7 +56,6 @@ public class Nutritionist extends AuditableAbstractAggregateRoot<Nutritionist> {
         this.acceptingNewPatients = acceptingNewPatients;
         this.bio = bio;
         this.profilePictureUrl = profilePictureUrl;
-        this.updatedAt = new Date();
     }
 
     public void updateInfo(String fullName, String bio, String profilePictureUrl,
@@ -73,6 +65,5 @@ public class Nutritionist extends AuditableAbstractAggregateRoot<Nutritionist> {
         this.profilePictureUrl = profilePictureUrl;
         this.acceptingNewPatients = acceptingNewPatients;
         this.yearsExperience = yearsExperience;
-        this.updatedAt = new Date();
     }
 }
