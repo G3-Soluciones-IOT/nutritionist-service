@@ -1,13 +1,13 @@
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:25-jdk AS build
 WORKDIR /workspace
 
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
 RUN chmod +x mvnw
 COPY src/ src/
-RUN ./mvnw -B -DskipTests package
+RUN ./mvnw -B -DskipTests clean package
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 WORKDIR /app
 COPY --from=build --chown=1001:0 /workspace/target/*.jar /app/app.jar
 
