@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import pe.edu.upc.nutritionist_service.nutritionist.application.internal.outboundservices.acl.rest.resource.SignUpResource;
 import pe.edu.upc.nutritionist_service.nutritionist.application.internal.outboundservices.acl.rest.resource.UserResource;
 
@@ -23,6 +24,9 @@ public interface IamIntegrationClient {
      */
     @GetMapping("/users/{userId}")
     UserResource getUserById(@PathVariable("userId") Long userId);
+
+    @GetMapping("/users/me")
+    UserResource getCurrentUser(@RequestHeader("Authorization") String authorization);
 
     /**
      * Creates a new user via sign-up in iam-service.
