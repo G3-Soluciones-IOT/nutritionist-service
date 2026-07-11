@@ -42,6 +42,14 @@ public class NutritionistsController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<NutritionistResource> getById(@PathVariable Long id) {
+        return queryService.findById(id)
+                .map(NutritionistResourceFromEntityAssembler::toResourceFromEntity)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<NutritionistResource> create(@RequestBody CreateNutritionistResource resource) {
         var created = commandService.handle(CreateNutritionistCommandFromResourceAssembler.toCommandFromResource(resource));
