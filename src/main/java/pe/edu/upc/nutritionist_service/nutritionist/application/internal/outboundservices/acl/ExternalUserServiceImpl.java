@@ -1,6 +1,8 @@
 package pe.edu.upc.nutritionist_service.nutritionist.application.internal.outboundservices.acl;
 
 import feign.FeignException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pe.edu.upc.nutritionist_service.nutritionist.application.internal.outboundservices.ExternalUserService;
 import pe.edu.upc.nutritionist_service.nutritionist.application.internal.outboundservices.acl.rest.IamIntegrationClient;
@@ -14,6 +16,8 @@ import java.util.List;
  */
 @Service
 public class ExternalUserServiceImpl implements ExternalUserService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalUserServiceImpl.class);
 
     private final IamIntegrationClient iamClient;
 
@@ -61,9 +65,15 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             return user != null && user.username() != null && !user.username().isBlank();
         } catch (FeignException.NotFound e) {
             return false;
+        } catch (FeignException.Unauthorized | FeignException.Forbidden e) {
+            LOGGER.error("IAM rejected internal user validation request for userId {} with status {}", userId, e.status(), e);
+            throw new IllegalStateException("IAM rejected internal user validation request", e);
+        } catch (FeignException e) {
+            LOGGER.error("IAM user validation request failed for userId {} with status {}", userId, e.status(), e);
+            throw new IllegalStateException("IAM user validation request failed", e);
         } catch (Exception e) {
-            System.err.println("Error checking user existence: " + e.getMessage());
-            return false;
+            LOGGER.error("Unexpected error checking user existence for userId {}", userId, e);
+            throw new IllegalStateException("Unexpected error checking user existence in IAM service", e);
         }
     }
 

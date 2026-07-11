@@ -2,6 +2,7 @@ package pe.edu.upc.nutritionist_service.nutritionist.application.internal.comman
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import pe.edu.upc.nutritionist_service.nutritionist.application.internal.outboundservices.ExternalPatientProfileService;
 import pe.edu.upc.nutritionist_service.nutritionist.domain.model.aggregates.NutritionistPatient;
 import pe.edu.upc.nutritionist_service.nutritionist.domain.model.commands.ApprovePatientCommand;
 import pe.edu.upc.nutritionist_service.nutritionist.domain.model.commands.CreateNutritionistPatientCommand;
@@ -15,13 +16,22 @@ import java.util.Optional;
 public class NutritionistPatientCommandServiceImpl implements NutritionistPatientCommandService {
 
     private final NutritionistPatientRepository repository;
+    private final ExternalPatientProfileService externalPatientProfileService;
 
-    public NutritionistPatientCommandServiceImpl(NutritionistPatientRepository repository) {
+    public NutritionistPatientCommandServiceImpl(
+            NutritionistPatientRepository repository,
+            ExternalPatientProfileService externalPatientProfileService) {
         this.repository = repository;
+        this.externalPatientProfileService = externalPatientProfileService;
     }
 
     @Override
     public NutritionistPatient handle(CreateNutritionistPatientCommand command) {
+        if (!externalPatientProfileService.patientProfileExists(command.patientUserId())) {
+            throw new IllegalArgumentException(
+                    "No patient user profile found for userId: " + command.patientUserId());
+        }
+
         var relation = new NutritionistPatient(
                 command.nutritionistId(),
                 command.patientUserId(),
