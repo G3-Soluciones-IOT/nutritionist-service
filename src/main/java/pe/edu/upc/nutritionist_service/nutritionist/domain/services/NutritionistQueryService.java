@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NutritionistQueryService {
+    Optional<Nutritionist> findById(Long id);
     Optional<Nutritionist> handle(GetNutritionistByUserIdQuery query);
     List<Nutritionist> handleAll();
 }

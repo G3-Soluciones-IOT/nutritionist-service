@@ -19,6 +19,11 @@ public class NutritionistQueryServiceImpl implements NutritionistQueryService {
     }
 
     @Override
+    public Optional<Nutritionist> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    @Override
     public Optional<Nutritionist> handle(GetNutritionistByUserIdQuery query) {
         return repository.findByUserId(query.userId());
     }
